@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard KPIs por salón · Junio 2025 vs 2026 (sin IVA)</title>
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --card: #ffffff;
+    --border: #e1e0d9;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #898781;
+    --green: #008300;
+    --red: #d03b3b;
+    --accent: #2a78d6;
+    --accent2: #a15c2a;
+    --row-alt: #fafaf8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    padding: 2rem 1rem;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+  header { margin-bottom: 1.25rem; }
+  h1 { font-size: 22px; font-weight: 500; margin: 0; }
+  .subtitle { font-size: 13px; color: var(--text-secondary); margin: 4px 0 0; }
+
+  .group-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+  .group-btn {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  .group-btn.active[data-group="propios"] {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .group-btn.active[data-group="franquicia"] {
+    background: var(--accent2);
+    color: #fff;
+    border-color: var(--accent2);
+  }
+
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 1.25rem;
+    border-bottom: 0.5px solid var(--border);
+    padding-bottom: 12px;
+  }
+  .tab-btn {
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 0.5px solid var(--border);
+    background: var(--card);
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  .tab-btn:hover { border-color: var(--text-muted); }
+  .tab-btn.active { background: var(--accent); color: #ffffff; border-color: var(--accent); }
+  .group-section[data-group="franquicia"] .tab-btn.active { background: var(--accent2); border-color: var(--accent2); }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .summary-row { display: flex; gap: 24px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .summary-tile { background: var(--card); border: 0.5px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; min-width: 140px; }
+  .summary-label { font-size: 12px; color: var(--text-secondary); margin: 0 0 2px; }
+  .summary-value { font-size: 18px; font-weight: 500; margin: 0; }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border: 0.5px solid var(--border); border-radius: 8px; overflow: hidden; font-size: 13px; }
+  thead th { text-align: left; padding: 10px 12px; font-weight: 500; color: var(--text-secondary); border-bottom: 0.5px solid var(--border); background: var(--row-alt); }
+  thead th.num { text-align: right; }
+  tbody td { padding: 8px 12px; border-bottom: 0.5px solid var(--border); }
+  tbody td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tbody tr:nth-child(even) { background: var(--row-alt); }
+  tbody tr:last-child td { border-bottom: none; }
+  .up { color: var(--green); }
+  .down { color: var(--red); }
+  .na { color: var(--text-muted); }
+  .group-section { display: none; }
+  .group-section.active { display: block; }
+  footer { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 2rem; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>Dashboard KPIs por salón · Junio</h1>
+    <p class="subtitle">Comparativa junio 2025 vs junio 2026 · cifras sin IVA (21%)</p>
+  </header>
+
+  <div class="group-tabs" id="groupTabs">
+    <button class="group-btn active" data-group="propios">Salones propios</button>
+    <button class="group-btn" data-group="franquicia">Salones franquiciados</button>
+  </div>
+
+  <div class="group-section active" data-group="propios">
+    <div class="tabs" id="tabs-propios">
+      <button class="tab-btn active" data-tab="tab0">Resumen</button>
+      <button class="tab-btn" data-tab="tab1">Ventas totales</button>
+<button class="tab-btn" data-tab="tab2">Ventas servicios</button>
+<button class="tab-btn" data-tab="tab3">Ventas productos</button>
+<button class="tab-btn" data-tab="tab4">Ventas estética</button>
+<button class="tab-btn" data-tab="tab5">Ventas color</button>
+<button class="tab-btn" data-tab="tab6">Ventas tratamientos</button>
+<button class="tab-btn" data-tab="tab7">Visitas mujer</button>
+<button class="tab-btn" data-tab="tab8">Visitas hombre</button>
+<button class="tab-btn" data-tab="tab9">Ticket medio mujer</button>
+<button class="tab-btn" data-tab="tab10">Ticket medio hombre</button>
+
+    </div>
+    <div id="panels-propios"></div>
+  </div>
+
+  <div class="group-section" data-group="franquicia">
+    <div class="tabs" id="tabs-franquicia">
+      <button class="tab-btn active" data-tab="tab0">Resumen</button>
+      <button class="tab-btn" data-tab="tab1">Ventas totales</button>
+<button class="tab-btn" data-tab="tab2">Ventas servicios</button>
+<button class="tab-btn" data-tab="tab3">Ventas productos</button>
+<button class="tab-btn" data-tab="tab4">Ventas estética</button>
+<button class="tab-btn" data-tab="tab5">Ventas color</button>
+<button class="tab-btn" data-tab="tab6">Ventas tratamientos</button>
+<button class="tab-btn" data-tab="tab7">Visitas mujer</button>
+<button class="tab-btn" data-tab="tab8">Visitas hombre</button>
+<button class="tab-btn" data-tab="tab9">Ticket medio mujer</button>
+<button class="tab-btn" data-tab="tab10">Ticket medio hombre</button>
+
+    </div>
+    <div id="panels-franquicia"></div>
+  </div>
+
+  <footer>
+    Datos: informe_junio.xlsx · Importes mostrados sin IVA (se ha dividido entre 1,21 las cifras en euros). Las columnas de visitas no llevan IVA al ser unidades, no importes. En el resumen, ventas/visitas son sumas de los salones del grupo; el ticket medio (ASP) es un promedio ponderado por visitas (facturación total / visitas totales), no la suma ni el promedio simple de los tickets por salón. "Salones propios" = empresa ISUC, S.A. "Salones franquiciados" = resto de empresas/autónomos gestores.
+  </footer>
+
+</div>
+
+<script>
+const KPI_ORDER = ["Total Sales", "Service Sales", "Product Sales", "Esthetics Sales", "Color Sales", "Tratamientos Sales", "Visits Woman", "Visits Men", "ASP Woman", "ASP Men"];
+const DATA_BY_GROUP = {
+  propios: {"Total Sales": {"kind": "eur", "label": "Ventas totales", "rows": [{"id": 6, "salon": "Vitoria-Gasteiz", "v25": 17052.26, "v26": 16619.05}, {"id": 8, "salon": "Vitoria-Canciller Ayala", "v25": 9511.49, "v26": 10063.43}, {"id": 23, "salon": "Vitoria-Donosti", "v25": 11674.2, "v26": 11950.43}, {"id": 20, "salon": "Miranda del Ebro-Ramón y Cajal", "v25": 7641.2, "v26": 7690.0}, {"id": 74, "salon": "Pamplona Paulino Caballero", "v25": 20660.7, "v26": 19307.55}, {"id": 47, "salon": "Madrid Núñez de Balboa", "v25": 19750.77, "v26": 22634.6}, {"id": 88, "salon": "Madrid Padilla", "v25": 27599.05, "v26": 27335.78}, {"id": 114, "salon": "Madrid Diego de León", "v25": 25177.75, "v26": 30957.12}, {"id": 115, "salon": "Valencia Cardenal Benlloch", "v25": 12107.02, "v26": 13676.39}, {"id": 17, "salon": "Alicante General O'Donnell", "v25": 21111.11, "v26": 24022.75}, {"id": 18, "salon": "Elche-Avda Jubalcoy", "v25": 9716.0, "v26": 7616.46}, {"id": 10, "salon": "Elche-Obispo Tormo", "v25": 14854.21, "v26": 14248.72}, {"id": 148, "salon": "Elche-Reina Victoria", "v25": 11255.08, "v26": 10708.68}, {"id": 14, "salon": "Vitoria Prado", "v25": 15400.75, "v26": 16652.49}]}, "Service Sales": {"kind": "eur", "label": "Ventas servicios", "rows": [{"id": 6, "salon": "Vitoria-Gasteiz", "v25": 15770.25, "v26": 16034.13}, {"id": 8, "salon": "Vitoria-Canciller Ayala", "v25": 9098.35, "v26": 9628.97}, {"id": 23, "salon": "Vitoria-Donosti", "v25": 10948.76, "v26": 11533.06}, {"id": 20, "salon": "Miranda del Ebro-Ramón y Cajal", "v25": 7312.4, "v26": 7471.07}, {"id": 74, "salon": "Pamplona Paulino Caballero", "v25": 19599.17, "v26": 18744.38}, {"id": 47, "salon": "Madrid Núñez de Balboa", "v25": 18212.4, "v26": 21508.26}, {"id": 88, "salon": "Madrid Padilla", "v25": 25822.77, "v26": 25342.6}, {"id": 114, "salon": "Madrid Diego de León", "v25": 23729.09, "v26": 28872.15}, {"id": 115, "salon": "Valencia Cardenal Benlloch", "v25": 11435.61, "v26": 12903.06}, {"id": 17, "salon": "Alicante General O'Donnell", "v25": 19782.02, "v26": 22666.98}, {"id": 18, "salon": "Elche-Avda Jubalcoy", "v25": 8201.57, "v26": 6775.91}, {"id": 10, "salon": "Elche-Obispo Tormo", "v25": 13546.9, "v26": 13175.25}, {"id": 148, "salon": "Elche-Reina Victoria", "v25": 10426.69, "v26": 10138.8}, {"id": 14, "salon": "Vitoria Prado", "v25": 14442.15, "v26": 15616.53}]}, "Product Sales": {"kind": "eur", "label": "Ventas productos", "rows": [{"id": 6, "salon": "Vitoria-Gasteiz", "v25": 1084.48, "v26": 498.96}, {"id": 8, "salon": "Vitoria-Canciller Ayala", "v25": 355.29, "v26": 442.73}, {"id": 23, "salon": "Vitoria-Donosti", "v25": 643.03, "v26": 392.7}, {"id": 20, "salon": "Miranda del Ebro-Ramón y Cajal", "v25": 317.22, "v26": 190.0}, {"id": 74, "salon": "Pamplona Paulino Caballero", "v25": 995.31, "v26": 679.69}, {"id": 47, "salon": "Madrid Núñez de Balboa", "v25": 1024.16, "v26": 806.07}, {"id": 88, "salon": "Madrid Padilla", "v25": 1456.53, "v26": 1789.87}, {"id": 114, "salon": "Madrid Diego de León", "v25": 1229.65, "v26": 1803.73}, {"id": 115, "salon": "Valencia Cardenal Benlloch", "v25": 488.43, "v26": 377.34}, {"id": 17, "salon": "Alicante General O'Donnell", "v25": 1662.29, "v26": 1110.98}, {"id": 18, "salon": "Elche-Avda Jubalcoy", "v25": 1481.64, "v26": 781.21}, {"id": 10, "salon": "Elche-Obispo Tormo", "v25": 1134.39, "v26": 966.03}, {"id": 148, "salon": "Elche-Reina Victoria", "v25": 758.44, "v26": 505.41}, {"id": 14, "salon": "Vitoria Prado", "v25": 888.34, "v26": 934.91}]}, "Esthetics Sales": {"kind": "eur", "label": "Ventas estética", "rows": [{"id": 6, "salon": "Vitoria-Gasteiz", "v25": 110.74, "v26": 41.32}, {"id": 8, "salon": "Vitoria-Canciller Ayala", "v25": 153.72, "v26": 120.66}, {"id": 23, "salon": "Vitoria-Donosti", "v25": 155.37, "v26": 200.0}, {"id": 20, "salon": "Miranda del Ebro-Ramón y Cajal", "v25": 142.15, "v26": 85.95}, {"id": 74, "salon": "Pamplona Paulino Caballero", "v25": 132.23, "v26": 81.82}, {"id": 47, "salon": "Madrid Núñez de Balboa", "v25": 200.0, "v26": 134.71}, {"id": 88, "salon": "Madrid Padilla", "v25": 2815.29, "v26": 2678.6}, {"id": 114, "salon": "Madrid Diego de León", "v25": 2373.72, "v26": 3311.16}, {"id": 115, "salon": "Valencia Cardenal Benlloch", "v25": 144.45, "v26": 133.88}, {"id": 17, "salon": "Alicante General O'Donnell", "v25": 230.91, "v26": 213.22}, {"id": 18, "salon": "Elche-Avda Jubalcoy", "v25": 69.42, "v26": 44.63}, {"id": 10, "salon": "Elche-Obispo Tormo", "v25": 161.98, "v26": 123.97}, {"id": 148, "salon": "Elche-Reina Victoria", "v25": 161.16, "v26": 143.8}, {"id": 14, "salon": "Vitoria Prado", "v25": 122.31, "v26": 143.8}]}, "Color Sales": {"kind": "eur", "label": "Ventas color", "rows": [{"id": 6, "salon": "Vitoria-Gasteiz", "v25": 2842.15, "v26": 4075.21}, {"id": 8, "salon": "Vitoria-Canciller Ayala", "v25": 2104.96, "v26": 2097.52}, {"id": 23, "salon": "Vitoria-Donosti", "v25": 2905.79, "v26": 3409.92}, {"id": 20, "salon": "Miranda del Ebro-Ramón y Cajal", "v25": 1871.9, "v26": 2006.61}, {"id": 74, "salon": "Pamplona Paulino Caballero", "v25": 2848.76, "v26": 3813.47}, {"id": 47, "salon": "Madrid Núñez de Balboa", "v25": 1341.32, "v26": 4282.64}, {"id": 88, "salon": "Madrid Padilla", "v25": 2091.74, "v26": 3508.76}, {"id": 114, "salon": "Madrid Diego de León", "v25": 2889.26, "v26": 5657.85}, {"id": 115, "salon": "Valencia Cardenal Benlloch", "v25": 2268.14, "v26": 2943.43}, {"id": 17, "salon": "Alicante General O'Donnell", "v25": 2406.69, "v26": 5882.64}, {"id": 18, "salon": "Elche-Avda Jubalcoy", "v25": 790.41, "v26": 1851.24}, {"id": 10, "salon": "Elche-Obispo Tormo", "v25": 1867.02, "v26": 3365.5}, {"id": 148, "salon": "Elche-Reina Victoria", "v25": 2004.3, "v26": 3106.12}, {"id": 14, "salon": "Vitoria Prado", "v25": 3418.18, "v26": 4113.22}]}, "Tratamientos Sales": {"kind": "eur", "label": "Ventas tratamientos", "rows": [{"id": 6, "salon": "Vitoria-Gasteiz", "v25": 2675.21, "v26": 1165.45}, {"id": 8, "salon": "Vitoria-Canciller Ayala", "v25": 719.01, "v26": 1048.76}, {"id": 23, "salon": "Vitoria-Donosti", "v25": 1153.72, "v26": 1171.07}, {"id": 20, "salon": "Miranda del Ebro-Ramón y Cajal", "v25": 271.07, "v26": 466.94}, {"id": 74, "salon": "Pamplona Paulino Caballero", "v25": 3633.06, "v26": 2043.18}, {"id": 47, "salon": "Madrid Núñez de Balboa", "v25": 5374.38, "v26": 3108.26}, {"id": 88, "salon": "Madrid Padilla", "v25": 4814.09, "v26": 3387.6}, {"id": 114, "salon": "Madrid Diego de León", "v25": 4719.83, "v26": 3144.96}, {"id": 115, "salon": "Valencia Cardenal Benlloch", "v25": 2062.07, "v26": 1998.35}, {"id": 17, "salon": "Alicante General O'Donnell", "v25": 4891.03, "v26": 3763.68}, {"id": 18, "salon": "Elche-Avda Jubalcoy", "v25": 2610.66, "v26": 1206.82}, {"id": 10, "salon": "Elche-Obispo Tormo", "v25": 4004.96, "v26": 2728.6}, {"id": 148, "salon": "Elche-Reina Victoria", "v25": 2598.6, "v26": 1851.24}, {"id": 14, "salon": "Vitoria Prado", "v25": 1566.12, "v26": 1956.2}]}, "Visits Woman": {"kind": "count", "label": "Visitas mujer", "rows": [{"id": 6, "salon": "Vitoria-Gasteiz", "v25": 435, "v26": 398}, {"id": 8, "salon": "Vitoria-Canciller Ayala", "v25": 276, "v26": 263}, {"id": 23, "salon": "Vitoria-Donosti", "v25": 287, "v26": 293}, {"id": 20, "salon": "Miranda del Ebro-Ramón y Cajal", "v25": 238, "v26": 212}, {"id": 74, "salon": "Pamplona Paulino Caballero", "v25": 504, "v26": 493}, {"id": 47, "salon": "Madrid Núñez de Balboa", "v25": 465, "v26": 540}, {"id": 88, "salon": "Madrid Padilla", "v25": 737, "v26": 694}, {"id": 114, "salon": "Madrid Diego de León", "v25": 659, "v26": 672}, {"id": 115, "salon": "Valencia Cardenal Benlloch", "v25": 352, "v26": 345}, {"id": 17, "salon": "Alicante General O'Donnell", "v25": 543, "v26": 559}, {"id": 18, "salon": "Elche-Avda Jubalcoy", "v25": 219, "v26": 179}, {"id": 10, "salon": "Elche-Obispo Tormo", "v25": 368, "v26": 317}, {"id": 148, "salon": "Elche-Reina Victoria", "v25": 308, "v26": 288}, {"id": 14, "salon": "Vitoria Prado", "v25": 366, "v26": 370}]}, "Visits Men": {"kind": "count", "label": "Visitas hombre", "rows": [{"id": 6, "salon": "Vitoria-Gasteiz", "v25": 56, "v26": 102}, {"id": 8, "salon": "Vitoria-Canciller Ayala", "v25": 46, "v26": 53}, {"id": 23, "salon": "Vitoria-Donosti", "v25": 73, "v26": 54}, {"id": 20, "salon": "Miranda del Ebro-Ramón y Cajal", "v25": 30, "v26": 44}, {"id": 74, "salon": "Pamplona Paulino Caballero", "v25": 76, "v26": 53}, {"id": 47, "salon": "Madrid Núñez de Balboa", "v25": 104, "v26": 115}, {"id": 88, "salon": "Madrid Padilla", "v25": 77, "v26": 73}, {"id": 114, "salon": "Madrid Diego de León", "v25": 81, "v26": 89}, {"id": 115, "salon": "Valencia Cardenal Benlloch", "v25": 58, "v26": 91}, {"id": 17, "salon": "Alicante General O'Donnell", "v25": 80, "v26": 91}, {"id": 18, "salon": "Elche-Avda Jubalcoy", "v25": 34, "v26": 36}, {"id": 10, "salon": "Elche-Obispo Tormo", "v25": 46, "v26": 50}, {"id": 148, "salon": "Elche-Reina Victoria", "v25": 23, "v26": 21}, {"id": 14, "salon": "Vitoria Prado", "v25": 100, "v26": 92}]}, "ASP Woman": {"kind": "eur", "label": "Ticket medio mujer", "rows": [{"id": 6, "salon": "Vitoria-Gasteiz", "v25": 35.96, "v26": 34.5}, {"id": 8, "salon": "Vitoria-Canciller Ayala", "v25": 30.86, "v26": 33.71}, {"id": 23, "salon": "Vitoria-Donosti", "v25": 34.98, "v26": 37.23}, {"id": 20, "salon": "Miranda del Ebro-Ramón y Cajal", "v25": 29.37, "v26": 30.99}, {"id": 74, "salon": "Pamplona Paulino Caballero", "v25": 38.46, "v26": 37.1}, {"id": 47, "salon": "Madrid Núñez de Balboa", "v25": 36.68, "v26": 36.32}, {"id": 88, "salon": "Madrid Padilla", "v25": 35.11, "v26": 36.86}, {"id": 114, "salon": "Madrid Diego de León", "v25": 34.38, "v26": 41.69}, {"id": 115, "salon": "Valencia Cardenal Benlloch", "v25": 31.76, "v26": 34.79}, {"id": 17, "salon": "Alicante General O'Donnell", "v25": 35.65, "v26": 38.55}, {"id": 18, "salon": "Elche-Avda Jubalcoy", "v25": 40.82, "v26": 38.43}, {"id": 10, "salon": "Elche-Obispo Tormo", "v25": 37.97, "v26": 40.94}, {"id": 148, "salon": "Elche-Reina Victoria", "v25": 34.66, "v26": 35.06}, {"id": 14, "salon": "Vitoria Prado", "v25": 35.2, "v26": 38.34}]}, "ASP Men": {"kind": "eur", "label": "Ticket medio hombre", "rows": [{"id": 6, "salon": "Vitoria-Gasteiz", "v25": 24.71, "v26": 28.33}, {"id": 8, "salon": "Vitoria-Canciller Ayala", "v25": 21.63, "v26": 22.62}, {"id": 23, "salon": "Vitoria-Donosti", "v25": 22.41, "v26": 19.29}, {"id": 20, "salon": "Miranda del Ebro-Ramón y Cajal", "v25": 21.73, "v26": 25.46}, {"id": 74, "salon": "Pamplona Paulino Caballero", "v25": 16.6, "v26": 18.71}, {"id": 47, "salon": "Madrid Núñez de Balboa", "v25": 25.74, "v26": 26.27}, {"id": 88, "salon": "Madrid Padilla", "v25": 22.36, "v26": 24.02}, {"id": 114, "salon": "Madrid Diego de León", "v25": 31.16, "v26": 33.06}, {"id": 115, "salon": "Valencia Cardenal Benlloch", "v25": 14.99, "v26": 18.4}, {"id": 17, "salon": "Alicante General O'Donnell", "v25": 20.83, "v26": 26.31}, {"id": 18, "salon": "Elche-Avda Jubalcoy", "v25": 22.81, "v26": 20.47}, {"id": 10, "salon": "Elche-Obispo Tormo", "v25": 19.14, "v26": 25.39}, {"id": 148, "salon": "Elche-Reina Victoria", "v25": 25.19, "v26": 29.14}, {"id": 14, "salon": "Vitoria Prado", "v25": 25.18, "v26": 26.79}]}},
+  franquicia: {"Total Sales": {"kind": "eur", "label": "Ventas totales", "rows": [{"id": 33, "salon": "Valencia (Angel Guimera)", "v25": 13497.6, "v26": 14547.22}, {"id": 34, "salon": "León (Avenida Roma 5)", "v25": 14155.7, "v26": 18521.98}, {"id": 52, "salon": "Alicante (C/ Pardo Gimeno, 24)", "v25": 17913.6, "v26": null}, {"id": 60, "salon": "Valencia (Emilio Baró,61)", "v25": 11354.38, "v26": 11295.39}, {"id": 77, "salon": "Valencia (Gasco Oliag, 6)", "v25": 16672.69, "v26": 12378.97}, {"id": 80, "salon": "Madrid (Osa Mayor, 65)", "v25": 9519.34, "v26": 9377.19}, {"id": 95, "salon": "Valencia (Calle del Mar,37)", "v25": 14549.99, "v26": 15861.2}, {"id": 100, "salon": "Madrid (San Juan de Ortega,102)", "v25": 17103.36, "v26": 16958.31}, {"id": 101, "salon": "Alicante (Calderon de la Barca, 12)", "v25": 9761.98, "v26": null}, {"id": 102, "salon": "Torrent (Pza Cortes Valencianas, 2)", "v25": 15650.5, "v26": 16901.53}, {"id": 106, "salon": "Valencia (Cadiz, 82)", "v25": 9908.26, "v26": 9323.72}, {"id": 107, "salon": "Valencia (Av.de Francia,10)", "v25": 21462.07, "v26": 16353.66}, {"id": 110, "salon": "Madrid (Ayala,62)", "v25": 20598.04, "v26": 20826.28}, {"id": 113, "salon": "Alboraya (Avd. Ausias March, 22)", "v25": 9588.78, "v26": 6748.26}, {"id": 119, "salon": "Pozuelo (Avd.Europa,23)", "v25": 8501.86, "v26": 11498.68}, {"id": 124, "salon": "Las Palmas (Luis Doreste,81)", "v25": 16207.79, "v26": 20315.4}, {"id": 125, "salon": "Madrid (Ibiza,23)", "v25": 15511.53, "v26": 18722.9}, {"id": 135, "salon": "Alicante (Ángel Lozano, 6)", "v25": 14106.3, "v26": null}, {"id": 138, "salon": "Madrid (Zurbano)", "v25": 18737.07, "v26": 19726.12}, {"id": 139, "salon": "Valencia (Cirilo Amoros,78)", "v25": 16198.85, "v26": 15095.0}, {"id": 140, "salon": "Barcelona (Paris 42)", "v25": 4379.26, "v26": null}, {"id": 141, "salon": "Valencia (Bachiller 12)", "v25": 14203.43, "v26": 16755.17}, {"id": 144, "salon": "Madrid (Monasterio del Escorial)", "v25": 14815.21, "v26": 12024.63}, {"id": 146, "salon": "Valencia (Martín El Humano, 22)", "v25": 11400.94, "v26": 10203.12}, {"id": 147, "salon": "San Juan (Historiador Vicente Ramos, 22)", "v25": 14108.06, "v26": 15687.19}, {"id": 149, "salon": "San Juan (Maestro José Garberí Serrano, 14)", "v25": 10322.26, "v26": 12736.09}, {"id": 150, "salon": "Barcelona (Buenos Aires, 46)", "v25": 5838.78, "v26": null}, {"id": 152, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": 6086.36, "v26": null}, {"id": 154, "salon": "Madrid (Sector Pueblos, 3 - Tres Cantos)", "v25": 9388.1, "v26": 12259.04}, {"id": 155, "salon": "SSDR (Av. Baunatal, 10)", "v25": 5458.95, "v26": 8574.72}, {"id": 156, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": null, "v26": 7908.19}]}, "Service Sales": {"kind": "eur", "label": "Ventas servicios", "rows": [{"id": 33, "salon": "Valencia (Angel Guimera)", "v25": 12691.74, "v26": 13726.45}, {"id": 34, "salon": "León (Avenida Roma 5)", "v25": 13934.71, "v26": 18141.86}, {"id": 52, "salon": "Alicante (C/ Pardo Gimeno, 24)", "v25": 16758.06, "v26": null}, {"id": 60, "salon": "Valencia (Emilio Baró,61)", "v25": 10598.76, "v26": 10520.66}, {"id": 77, "salon": "Valencia (Gasco Oliag, 6)", "v25": 15426.98, "v26": 11650.54}, {"id": 80, "salon": "Madrid (Osa Mayor, 65)", "v25": 8941.32, "v26": 8875.21}, {"id": 95, "salon": "Valencia (Calle del Mar,37)", "v25": 13393.06, "v26": 14500.79}, {"id": 100, "salon": "Madrid (San Juan de Ortega,102)", "v25": 16758.43, "v26": 16796.98}, {"id": 101, "salon": "Alicante (Calderon de la Barca, 12)", "v25": 9253.31, "v26": null}, {"id": 102, "salon": "Torrent (Pza Cortes Valencianas, 2)", "v25": 12381.61, "v26": 14739.71}, {"id": 106, "salon": "Valencia (Cadiz, 82)", "v25": 8441.32, "v26": 8522.31}, {"id": 107, "salon": "Valencia (Av.de Francia,10)", "v25": 20287.6, "v26": 15284.05}, {"id": 110, "salon": "Madrid (Ayala,62)", "v25": 19589.26, "v26": 20285.95}, {"id": 113, "salon": "Alboraya (Avd. Ausias March, 22)", "v25": 9217.6, "v26": 6446.53}, {"id": 119, "salon": "Pozuelo (Avd.Europa,23)", "v25": 8017.36, "v26": 10827.27}, {"id": 124, "salon": "Las Palmas (Luis Doreste,81)", "v25": 15349.75, "v26": 18933.18}, {"id": 125, "salon": "Madrid (Ibiza,23)", "v25": 14920.21, "v26": 17974.83}, {"id": 135, "salon": "Alicante (Ángel Lozano, 6)", "v25": 13209.09, "v26": null}, {"id": 138, "salon": "Madrid (Zurbano)", "v25": 17938.84, "v26": 19002.48}, {"id": 139, "salon": "Valencia (Cirilo Amoros,78)", "v25": 15582.64, "v26": 13583.47}, {"id": 140, "salon": "Barcelona (Paris 42)", "v25": 4379.26, "v26": null}, {"id": 141, "salon": "Valencia (Bachiller 12)", "v25": 13551.4, "v26": 15836.86}, {"id": 144, "salon": "Madrid (Monasterio del Escorial)", "v25": 14064.88, "v26": 11944.21}, {"id": 146, "salon": "Valencia (Martín El Humano, 22)", "v25": 10268.1, "v26": 9453.84}, {"id": 147, "salon": "San Juan (Historiador Vicente Ramos, 22)", "v25": 13251.9, "v26": 14630.79}, {"id": 149, "salon": "San Juan (Maestro José Garberí Serrano, 14)", "v25": 9596.78, "v26": 11966.57}, {"id": 150, "salon": "Barcelona (Buenos Aires, 46)", "v25": 5574.05, "v26": null}, {"id": 152, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": 5894.26, "v26": null}, {"id": 154, "salon": "Madrid (Sector Pueblos, 3 - Tres Cantos)", "v25": 8853.55, "v26": 11598.02}, {"id": 155, "salon": "SSDR (Av. Baunatal, 10)", "v25": 5337.85, "v26": 8220.25}, {"id": 156, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": null, "v26": 7351.45}]}, "Product Sales": {"kind": "eur", "label": "Ventas productos", "rows": [{"id": 33, "salon": "Valencia (Angel Guimera)", "v25": 783.55, "v26": 736.48}, {"id": 34, "salon": "León (Avenida Roma 5)", "v25": 130.08, "v26": 336.31}, {"id": 52, "salon": "Alicante (C/ Pardo Gimeno, 24)", "v25": 1125.79, "v26": null}, {"id": 60, "salon": "Valencia (Emilio Baró,61)", "v25": 663.06, "v26": 490.43}, {"id": 77, "salon": "Valencia (Gasco Oliag, 6)", "v25": 863.07, "v26": 483.8}, {"id": 80, "salon": "Madrid (Osa Mayor, 65)", "v25": 430.91, "v26": 387.11}, {"id": 95, "salon": "Valencia (Calle del Mar,37)", "v25": 851.14, "v26": 1019.09}, {"id": 100, "salon": "Madrid (San Juan de Ortega,102)", "v25": 176.58, "v26": 93.55}, {"id": 101, "salon": "Alicante (Calderon de la Barca, 12)", "v25": 508.67, "v26": null}, {"id": 102, "salon": "Torrent (Pza Cortes Valencianas, 2)", "v25": 2431.7, "v26": 1587.52}, {"id": 106, "salon": "Valencia (Cadiz, 82)", "v25": 550.41, "v26": 519.67}, {"id": 107, "salon": "Valencia (Av.de Francia,10)", "v25": 734.79, "v26": 357.45}, {"id": 110, "salon": "Madrid (Ayala,62)", "v25": 850.93, "v26": 513.88}, {"id": 113, "salon": "Alboraya (Avd. Ausias March, 22)", "v25": 336.46, "v26": 250.5}, {"id": 119, "salon": "Pozuelo (Avd.Europa,23)", "v25": 374.59, "v26": 398.68}, {"id": 124, "salon": "Las Palmas (Luis Doreste,81)", "v25": 795.48, "v26": 1169.53}, {"id": 125, "salon": "Madrid (Ibiza,23)", "v25": 561.57, "v26": 701.79}, {"id": 135, "salon": "Alicante (Ángel Lozano, 6)", "v25": 879.02, "v26": null}, {"id": 138, "salon": "Madrid (Zurbano)", "v25": 717.23, "v26": 665.79}, {"id": 139, "salon": "Valencia (Cirilo Amoros,78)", "v25": 601.33, "v26": 420.62}, {"id": 140, "salon": "Barcelona (Paris 42)", "v25": null, "v26": null}, {"id": 141, "salon": "Valencia (Bachiller 12)", "v25": 728.06, "v26": 702.6}, {"id": 144, "salon": "Madrid (Monasterio del Escorial)", "v25": 750.33, "v26": 80.41}, {"id": 146, "salon": "Valencia (Martín El Humano, 22)", "v25": 979.87, "v26": 497.21}, {"id": 147, "salon": "San Juan (Historiador Vicente Ramos, 22)", "v25": 673.18, "v26": 929.96}, {"id": 149, "salon": "San Juan (Maestro José Garberí Serrano, 14)", "v25": 447.79, "v26": 718.2}, {"id": 150, "salon": "Barcelona (Buenos Aires, 46)", "v25": 161.08, "v26": null}, {"id": 152, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": 152.43, "v26": null}, {"id": 154, "salon": "Madrid (Sector Pueblos, 3 - Tres Cantos)", "v25": 435.54, "v26": 605.65}, {"id": 155, "salon": "SSDR (Av. Baunatal, 10)", "v25": 88.87, "v26": 224.06}, {"id": 156, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": null, "v26": 502.2}]}, "Esthetics Sales": {"kind": "eur", "label": "Ventas estética", "rows": [{"id": 33, "salon": "Valencia (Angel Guimera)", "v25": 185.95, "v26": 106.61}, {"id": 34, "salon": "León (Avenida Roma 5)", "v25": 84.3, "v26": 104.13}, {"id": 52, "salon": "Alicante (C/ Pardo Gimeno, 24)", "v25": 978.93, "v26": null}, {"id": 60, "salon": "Valencia (Emilio Baró,61)", "v25": 188.43, "v26": 179.34}, {"id": 77, "salon": "Valencia (Gasco Oliag, 6)", "v25": 188.22, "v26": 108.43}, {"id": 80, "salon": "Madrid (Osa Mayor, 65)", "v25": 59.5, "v26": 102.48}, {"id": 95, "salon": "Valencia (Calle del Mar,37)", "v25": 128.1, "v26": 150.41}, {"id": 100, "salon": "Madrid (San Juan de Ortega,102)", "v25": 1306.61, "v26": 1167.11}, {"id": 101, "salon": "Alicante (Calderon de la Barca, 12)", "v25": 14.88, "v26": null}, {"id": 102, "salon": "Torrent (Pza Cortes Valencianas, 2)", "v25": 458.68, "v26": 418.18}, {"id": 106, "salon": "Valencia (Cadiz, 82)", "v25": 66.94, "v26": 24.79}, {"id": 107, "salon": "Valencia (Av.de Francia,10)", "v25": 203.31, "v26": 49.59}, {"id": 110, "salon": "Madrid (Ayala,62)", "v25": 66.12, "v26": 129.75}, {"id": 113, "salon": "Alboraya (Avd. Ausias March, 22)", "v25": 120.66, "v26": 24.79}, {"id": 119, "salon": "Pozuelo (Avd.Europa,23)", "v25": 51.24, "v26": 29.75}, {"id": 124, "salon": "Las Palmas (Luis Doreste,81)", "v25": 1111.57, "v26": 1254.55}, {"id": 125, "salon": "Madrid (Ibiza,23)", "v25": 157.02, "v26": 143.8}, {"id": 135, "salon": "Alicante (Ángel Lozano, 6)", "v25": 110.74, "v26": null}, {"id": 138, "salon": "Madrid (Zurbano)", "v25": 223.14, "v26": 120.66}, {"id": 139, "salon": "Valencia (Cirilo Amoros,78)", "v25": 113.22, "v26": 92.56}, {"id": 140, "salon": "Barcelona (Paris 42)", "v25": 91.74, "v26": null}, {"id": 141, "salon": "Valencia (Bachiller 12)", "v25": 213.55, "v26": 123.47}, {"id": 144, "salon": "Madrid (Monasterio del Escorial)", "v25": 33.06, "v26": 34.71}, {"id": 146, "salon": "Valencia (Martín El Humano, 22)", "v25": 181.9, "v26": 29.75}, {"id": 147, "salon": "San Juan (Historiador Vicente Ramos, 22)", "v25": 89.26, "v26": 171.9}, {"id": 149, "salon": "San Juan (Maestro José Garberí Serrano, 14)", "v25": 132.23, "v26": 103.39}, {"id": 150, "salon": "Barcelona (Buenos Aires, 46)", "v25": 44.63, "v26": null}, {"id": 152, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": 89.67, "v26": null}, {"id": 154, "salon": "Madrid (Sector Pueblos, 3 - Tres Cantos)", "v25": 84.96, "v26": 14.88}, {"id": 155, "salon": "SSDR (Av. Baunatal, 10)", "v25": 54.55, "v26": 34.71}, {"id": 156, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": null, "v26": 73.55}]}, "Color Sales": {"kind": "eur", "label": "Ventas color", "rows": [{"id": 33, "salon": "Valencia (Angel Guimera)", "v25": 3481.82, "v26": 3322.31}, {"id": 34, "salon": "León (Avenida Roma 5)", "v25": 3688.43, "v26": 4337.85}, {"id": 52, "salon": "Alicante (C/ Pardo Gimeno, 24)", "v25": 4358.88, "v26": null}, {"id": 60, "salon": "Valencia (Emilio Baró,61)", "v25": 2642.98, "v26": 2939.67}, {"id": 77, "salon": "Valencia (Gasco Oliag, 6)", "v25": 3250.99, "v26": 2714.34}, {"id": 80, "salon": "Madrid (Osa Mayor, 65)", "v25": 1776.86, "v26": 1996.69}, {"id": 95, "salon": "Valencia (Calle del Mar,37)", "v25": 2735.54, "v26": 3352.85}, {"id": 100, "salon": "Madrid (San Juan de Ortega,102)", "v25": 4630.58, "v26": 5039.83}, {"id": 101, "salon": "Alicante (Calderon de la Barca, 12)", "v25": 2604.96, "v26": null}, {"id": 102, "salon": "Torrent (Pza Cortes Valencianas, 2)", "v25": 3291.49, "v26": 3903.8}, {"id": 106, "salon": "Valencia (Cadiz, 82)", "v25": 1941.32, "v26": 2328.93}, {"id": 107, "salon": "Valencia (Av.de Francia,10)", "v25": 5269.42, "v26": 4215.74}, {"id": 110, "salon": "Madrid (Ayala,62)", "v25": 5486.78, "v26": 6124.79}, {"id": 113, "salon": "Alboraya (Avd. Ausias March, 22)", "v25": 2579.59, "v26": 1682.64}, {"id": 119, "salon": "Pozuelo (Avd.Europa,23)", "v25": 1805.79, "v26": 2732.23}, {"id": 124, "salon": "Las Palmas (Luis Doreste,81)", "v25": 2240.91, "v26": 3270.5}, {"id": 125, "salon": "Madrid (Ibiza,23)", "v25": 4654.55, "v26": 5727.15}, {"id": 135, "salon": "Alicante (Ángel Lozano, 6)", "v25": 3192.48, "v26": null}, {"id": 138, "salon": "Madrid (Zurbano)", "v25": 4596.69, "v26": 5174.38}, {"id": 139, "salon": "Valencia (Cirilo Amoros,78)", "v25": 2957.85, "v26": 3129.75}, {"id": 140, "salon": "Barcelona (Paris 42)", "v25": 711.57, "v26": null}, {"id": 141, "salon": "Valencia (Bachiller 12)", "v25": 3208.6, "v26": 3428.6}, {"id": 144, "salon": "Madrid (Monasterio del Escorial)", "v25": 4414.05, "v26": 3677.69}, {"id": 146, "salon": "Valencia (Martín El Humano, 22)", "v25": 2215.79, "v26": 2114.05}, {"id": 147, "salon": "San Juan (Historiador Vicente Ramos, 22)", "v25": 3536.69, "v26": 4246.12}, {"id": 149, "salon": "San Juan (Maestro José Garberí Serrano, 14)", "v25": 2280.54, "v26": 3340.5}, {"id": 150, "salon": "Barcelona (Buenos Aires, 46)", "v25": 1083.06, "v26": null}, {"id": 152, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": 1624.46, "v26": null}, {"id": 154, "salon": "Madrid (Sector Pueblos, 3 - Tres Cantos)", "v25": 2443.88, "v26": 3595.21}, {"id": 155, "salon": "SSDR (Av. Baunatal, 10)", "v25": 1697.52, "v26": 2480.99}, {"id": 156, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": null, "v26": 2086.78}]}, "Tratamientos Sales": {"kind": "eur", "label": "Ventas tratamientos", "rows": [{"id": 33, "salon": "Valencia (Angel Guimera)", "v25": 2295.04, "v26": 2328.1}, {"id": 34, "salon": "León (Avenida Roma 5)", "v25": 688.43, "v26": 2106.61}, {"id": 52, "salon": "Alicante (C/ Pardo Gimeno, 24)", "v25": 2078.31, "v26": null}, {"id": 60, "salon": "Valencia (Emilio Baró,61)", "v25": 1666.53, "v26": 1674.38}, {"id": 77, "salon": "Valencia (Gasco Oliag, 6)", "v25": 2941.07, "v26": 2316.98}, {"id": 80, "salon": "Madrid (Osa Mayor, 65)", "v25": 1691.74, "v26": 1717.36}, {"id": 95, "salon": "Valencia (Calle del Mar,37)", "v25": 1862.81, "v26": 2403.31}, {"id": 100, "salon": "Madrid (San Juan de Ortega,102)", "v25": 907.44, "v26": 621.49}, {"id": 101, "salon": "Alicante (Calderon de la Barca, 12)", "v25": 1415.7, "v26": null}, {"id": 102, "salon": "Torrent (Pza Cortes Valencianas, 2)", "v25": 1765.29, "v26": 2138.84}, {"id": 106, "salon": "Valencia (Cadiz, 82)", "v25": 2083.47, "v26": 1732.23}, {"id": 107, "salon": "Valencia (Av.de Francia,10)", "v25": 2842.98, "v26": 3069.42}, {"id": 110, "salon": "Madrid (Ayala,62)", "v25": 2449.59, "v26": 2186.78}, {"id": 113, "salon": "Alboraya (Avd. Ausias March, 22)", "v25": 922.31, "v26": 1009.92}, {"id": 119, "salon": "Pozuelo (Avd.Europa,23)", "v25": 1100.83, "v26": 2468.6}, {"id": 124, "salon": "Las Palmas (Luis Doreste,81)", "v25": 1646.28, "v26": 2528.6}, {"id": 125, "salon": "Madrid (Ibiza,23)", "v25": 1631.12, "v26": 2408.8}, {"id": 135, "salon": "Alicante (Ángel Lozano, 6)", "v25": 1612.98, "v26": null}, {"id": 138, "salon": "Madrid (Zurbano)", "v25": 2195.87, "v26": 2442.15}, {"id": 139, "salon": "Valencia (Cirilo Amoros,78)", "v25": 3842.98, "v26": 3157.02}, {"id": 140, "salon": "Barcelona (Paris 42)", "v25": 358.68, "v26": null}, {"id": 141, "salon": "Valencia (Bachiller 12)", "v25": 2383.06, "v26": 3809.92}, {"id": 144, "salon": "Madrid (Monasterio del Escorial)", "v25": 1278.1, "v26": 992.98}, {"id": 146, "salon": "Valencia (Martín El Humano, 22)", "v25": 1471.07, "v26": 1929.75}, {"id": 147, "salon": "San Juan (Historiador Vicente Ramos, 22)", "v25": 1916.36, "v26": 2027.27}, {"id": 149, "salon": "San Juan (Maestro José Garberí Serrano, 14)", "v25": 1361.36, "v26": 1262.81}, {"id": 150, "salon": "Barcelona (Buenos Aires, 46)", "v25": 491.74, "v26": null}, {"id": 152, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": 651.86, "v26": null}, {"id": 154, "salon": "Madrid (Sector Pueblos, 3 - Tres Cantos)", "v25": 703.39, "v26": 1544.63}, {"id": 155, "salon": "SSDR (Av. Baunatal, 10)", "v25": 337.4, "v26": 867.77}, {"id": 156, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": null, "v26": 1180.17}]}, "Visits Woman": {"kind": "count", "label": "Visitas mujer", "rows": [{"id": 33, "salon": "Valencia (Angel Guimera)", "v25": 311, "v26": 327}, {"id": 34, "salon": "León (Avenida Roma 5)", "v25": 464, "v26": 564}, {"id": 52, "salon": "Alicante (C/ Pardo Gimeno, 24)", "v25": 506, "v26": null}, {"id": 60, "salon": "Valencia (Emilio Baró,61)", "v25": 283, "v26": 281}, {"id": 77, "salon": "Valencia (Gasco Oliag, 6)", "v25": 443, "v26": 337}, {"id": 80, "salon": "Madrid (Osa Mayor, 65)", "v25": 185, "v26": 190}, {"id": 95, "salon": "Valencia (Calle del Mar,37)", "v25": 378, "v26": 446}, {"id": 100, "salon": "Madrid (San Juan de Ortega,102)", "v25": 485, "v26": 434}, {"id": 101, "salon": "Alicante (Calderon de la Barca, 12)", "v25": 284, "v26": null}, {"id": 102, "salon": "Torrent (Pza Cortes Valencianas, 2)", "v25": 292, "v26": 326}, {"id": 106, "salon": "Valencia (Cadiz, 82)", "v25": 172, "v26": 185}, {"id": 107, "salon": "Valencia (Av.de Francia,10)", "v25": 590, "v26": 388}, {"id": 110, "salon": "Madrid (Ayala,62)", "v25": 587, "v26": 567}, {"id": 113, "salon": "Alboraya (Avd. Ausias March, 22)", "v25": 156, "v26": 115}, {"id": 119, "salon": "Pozuelo (Avd.Europa,23)", "v25": 208, "v26": 235}, {"id": 124, "salon": "Las Palmas (Luis Doreste,81)", "v25": 482, "v26": 505}, {"id": 125, "salon": "Madrid (Ibiza,23)", "v25": 428, "v26": 448}, {"id": 135, "salon": "Alicante (Ángel Lozano, 6)", "v25": 362, "v26": null}, {"id": 138, "salon": "Madrid (Zurbano)", "v25": 426, "v26": 437}, {"id": 139, "salon": "Valencia (Cirilo Amoros,78)", "v25": 435, "v26": 371}, {"id": 140, "salon": "Barcelona (Paris 42)", "v25": 133, "v26": null}, {"id": 141, "salon": "Valencia (Bachiller 12)", "v25": 375, "v26": 360}, {"id": 144, "salon": "Madrid (Monasterio del Escorial)", "v25": 334, "v26": 268}, {"id": 146, "salon": "Valencia (Martín El Humano, 22)", "v25": 350, "v26": 273}, {"id": 147, "salon": "San Juan (Historiador Vicente Ramos, 22)", "v25": 353, "v26": 353}, {"id": 149, "salon": "San Juan (Maestro José Garberí Serrano, 14)", "v25": 278, "v26": 324}, {"id": 150, "salon": "Barcelona (Buenos Aires, 46)", "v25": 168, "v26": null}, {"id": 152, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": 184, "v26": null}, {"id": 154, "salon": "Madrid (Sector Pueblos, 3 - Tres Cantos)", "v25": 158, "v26": 196}, {"id": 155, "salon": "SSDR (Av. Baunatal, 10)", "v25": 167, "v26": 202}, {"id": 156, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": null, "v26": 190}]}, "Visits Men": {"kind": "count", "label": "Visitas hombre", "rows": [{"id": 33, "salon": "Valencia (Angel Guimera)", "v25": 59, "v26": 74}, {"id": 34, "salon": "León (Avenida Roma 5)", "v25": 31, "v26": 35}, {"id": 52, "salon": "Alicante (C/ Pardo Gimeno, 24)", "v25": 38, "v26": null}, {"id": 60, "salon": "Valencia (Emilio Baró,61)", "v25": 57, "v26": 38}, {"id": 77, "salon": "Valencia (Gasco Oliag, 6)", "v25": 43, "v26": 41}, {"id": 80, "salon": "Madrid (Osa Mayor, 65)", "v25": 41, "v26": 57}, {"id": 95, "salon": "Valencia (Calle del Mar,37)", "v25": 76, "v26": 69}, {"id": 100, "salon": "Madrid (San Juan de Ortega,102)", "v25": 94, "v26": 133}, {"id": 101, "salon": "Alicante (Calderon de la Barca, 12)", "v25": 14, "v26": null}, {"id": 102, "salon": "Torrent (Pza Cortes Valencianas, 2)", "v25": 67, "v26": 85}, {"id": 106, "salon": "Valencia (Cadiz, 82)", "v25": 33, "v26": 70}, {"id": 107, "salon": "Valencia (Av.de Francia,10)", "v25": 144, "v26": 93}, {"id": 110, "salon": "Madrid (Ayala,62)", "v25": 46, "v26": 32}, {"id": 113, "salon": "Alboraya (Avd. Ausias March, 22)", "v25": 112, "v26": 92}, {"id": 119, "salon": "Pozuelo (Avd.Europa,23)", "v25": 31, "v26": 43}, {"id": 124, "salon": "Las Palmas (Luis Doreste,81)", "v25": 31, "v26": 66}, {"id": 125, "salon": "Madrid (Ibiza,23)", "v25": 20, "v26": 22}, {"id": 135, "salon": "Alicante (Ángel Lozano, 6)", "v25": 65, "v26": null}, {"id": 138, "salon": "Madrid (Zurbano)", "v25": 68, "v26": 77}, {"id": 139, "salon": "Valencia (Cirilo Amoros,78)", "v25": 52, "v26": 67}, {"id": 140, "salon": "Barcelona (Paris 42)", "v25": 25, "v26": null}, {"id": 141, "salon": "Valencia (Bachiller 12)", "v25": 55, "v26": 70}, {"id": 144, "salon": "Madrid (Monasterio del Escorial)", "v25": 70, "v26": 96}, {"id": 146, "salon": "Valencia (Martín El Humano, 22)", "v25": 30, "v26": 32}, {"id": 147, "salon": "San Juan (Historiador Vicente Ramos, 22)", "v25": 77, "v26": 83}, {"id": 149, "salon": "San Juan (Maestro José Garberí Serrano, 14)", "v25": 87, "v26": 116}, {"id": 150, "salon": "Barcelona (Buenos Aires, 46)", "v25": 18, "v26": null}, {"id": 152, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": 31, "v26": null}, {"id": 154, "salon": "Madrid (Sector Pueblos, 3 - Tres Cantos)", "v25": 107, "v26": 86}, {"id": 155, "salon": "SSDR (Av. Baunatal, 10)", "v25": 33, "v26": 31}, {"id": 156, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": null, "v26": 48}]}, "ASP Woman": {"kind": "eur", "label": "Ticket medio mujer", "rows": [{"id": 33, "salon": "Valencia (Angel Guimera)", "v25": 37.38, "v26": 36.84}, {"id": 34, "salon": "León (Avenida Roma 5)", "v25": 29.09, "v26": 31.74}, {"id": 52, "salon": "Alicante (C/ Pardo Gimeno, 24)", "v25": 34.14, "v26": null}, {"id": 60, "salon": "Valencia (Emilio Baró,61)", "v25": 37.07, "v26": 38.83}, {"id": 77, "salon": "Valencia (Gasco Oliag, 6)", "v25": 36.4, "v26": 33.87}, {"id": 80, "salon": "Madrid (Osa Mayor, 65)", "v25": 44.66, "v26": 40.64}, {"id": 95, "salon": "Valencia (Calle del Mar,37)", "v25": 34.3, "v26": 32.6}, {"id": 100, "salon": "Madrid (San Juan de Ortega,102)", "v25": 30.81, "v26": 31.41}, {"id": 101, "salon": "Alicante (Calderon de la Barca, 12)", "v25": 32.95, "v26": null}, {"id": 102, "salon": "Torrent (Pza Cortes Valencianas, 2)", "v25": 47.32, "v26": 44.99}, {"id": 106, "salon": "Valencia (Cadiz, 82)", "v25": 53.92, "v26": 42.64}, {"id": 107, "salon": "Valencia (Av.de Francia,10)", "v25": 33.48, "v26": 39.29}, {"id": 110, "salon": "Madrid (Ayala,62)", "v25": 33.73, "v26": 35.8}, {"id": 113, "salon": "Alboraya (Avd. Ausias March, 22)", "v25": 35.58, "v26": 36.34}, {"id": 119, "salon": "Pozuelo (Avd.Europa,23)", "v25": 37.22, "v26": 45.09}, {"id": 124, "salon": "Las Palmas (Luis Doreste,81)", "v25": 32.0, "v26": 36.66}, {"id": 125, "salon": "Madrid (Ibiza,23)", "v25": 35.47, "v26": 40.34}, {"id": 135, "salon": "Alicante (Ángel Lozano, 6)", "v25": 32.9, "v26": null}, {"id": 138, "salon": "Madrid (Zurbano)", "v25": 39.38, "v26": 40.06}, {"id": 139, "salon": "Valencia (Cirilo Amoros,78)", "v25": 35.38, "v26": 37.85}, {"id": 140, "salon": "Barcelona (Paris 42)", "v25": 30.27, "v26": null}, {"id": 141, "salon": "Valencia (Bachiller 12)", "v25": 35.25, "v26": 41.87}, {"id": 144, "salon": "Madrid (Monasterio del Escorial)", "v25": 38.67, "v26": 35.88}, {"id": 146, "salon": "Valencia (Martín El Humano, 22)", "v25": 31.07, "v26": 35.27}, {"id": 147, "salon": "San Juan (Historiador Vicente Ramos, 22)", "v25": 36.35, "v26": 39.94}, {"id": 149, "salon": "San Juan (Maestro José Garberí Serrano, 14)", "v25": 31.99, "v26": 33.16}, {"id": 150, "salon": "Barcelona (Buenos Aires, 46)", "v25": 29.32, "v26": null}, {"id": 152, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": 30.48, "v26": null}, {"id": 154, "salon": "Madrid (Sector Pueblos, 3 - Tres Cantos)", "v25": 39.04, "v26": 45.47}, {"id": 155, "salon": "SSDR (Av. Baunatal, 10)", "v25": 28.49, "v26": 37.72}, {"id": 156, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": null, "v26": 36.65}]}, "ASP Men": {"kind": "eur", "label": "Ticket medio hombre", "rows": [{"id": 33, "salon": "Valencia (Angel Guimera)", "v25": 31.71, "v26": 33.77}, {"id": 34, "salon": "León (Avenida Roma 5)", "v25": 21.17, "v26": 17.78}, {"id": 52, "salon": "Alicante (C/ Pardo Gimeno, 24)", "v25": 16.76, "v26": null}, {"id": 60, "salon": "Valencia (Emilio Baró,61)", "v25": 15.14, "v26": 10.09}, {"id": 77, "salon": "Valencia (Gasco Oliag, 6)", "v25": 12.74, "v26": 23.52}, {"id": 80, "salon": "Madrid (Osa Mayor, 65)", "v25": 29.97, "v26": 28.4}, {"id": 95, "salon": "Valencia (Calle del Mar,37)", "v25": 20.22, "v26": 17.88}, {"id": 100, "salon": "Madrid (San Juan de Ortega,102)", "v25": 22.6, "v26": 25.02}, {"id": 101, "salon": "Alicante (Calderon de la Barca, 12)", "v25": 26.68, "v26": null}, {"id": 102, "salon": "Torrent (Pza Cortes Valencianas, 2)", "v25": 27.38, "v26": 26.3}, {"id": 106, "salon": "Valencia (Cadiz, 82)", "v25": 19.21, "v26": 20.29}, {"id": 107, "salon": "Valencia (Av.de Francia,10)", "v25": 11.11, "v26": 11.94}, {"id": 110, "salon": "Madrid (Ayala,62)", "v25": 17.4, "v26": 15.93}, {"id": 113, "salon": "Alboraya (Avd. Ausias March, 22)", "v25": 36.06, "v26": 27.93}, {"id": 119, "salon": "Pozuelo (Avd.Europa,23)", "v25": 24.05, "v26": 20.99}, {"id": 124, "salon": "Las Palmas (Luis Doreste,81)", "v25": 25.29, "v26": 27.3}, {"id": 125, "salon": "Madrid (Ibiza,23)", "v25": 16.44, "v26": 29.55}, {"id": 135, "salon": "Alicante (Ángel Lozano, 6)", "v25": 32.6, "v26": null}, {"id": 138, "salon": "Madrid (Zurbano)", "v25": 28.84, "v26": 28.34}, {"id": 139, "salon": "Valencia (Cirilo Amoros,78)", "v25": 14.61, "v26": 15.57}, {"id": 140, "salon": "Barcelona (Paris 42)", "v25": 14.12, "v26": null}, {"id": 141, "salon": "Valencia (Bachiller 12)", "v25": 17.53, "v26": 24.03}, {"id": 144, "salon": "Madrid (Monasterio del Escorial)", "v25": 27.12, "v26": 25.09}, {"id": 146, "salon": "Valencia (Martín El Humano, 22)", "v25": 17.58, "v26": 17.99}, {"id": 147, "salon": "San Juan (Historiador Vicente Ramos, 22)", "v25": 16.39, "v26": 19.15}, {"id": 149, "salon": "San Juan (Maestro José Garberí Serrano, 14)", "v25": 16.43, "v26": 17.19}, {"id": 150, "salon": "Barcelona (Buenos Aires, 46)", "v25": 21.94, "v26": null}, {"id": 152, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": 15.44, "v26": null}, {"id": 154, "salon": "Madrid (Sector Pueblos, 3 - Tres Cantos)", "v25": 30.08, "v26": 38.91}, {"id": 155, "salon": "SSDR (Av. Baunatal, 10)", "v25": 21.22, "v26": 30.79}, {"id": 156, "salon": "Alicante (Ciudad de Matanzas, 4)", "v25": null, "v26": 19.67}]}}
+};
+
+function fmtEur(v) {
+  if (v === null || v === undefined) return '<span class="na">—</span>';
+  return v.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+}
+function fmtCount(v) {
+  if (v === null || v === undefined) return '<span class="na">—</span>';
+  return v.toLocaleString('es-ES');
+}
+function fmtVal(v, kind) { return kind === 'eur' ? fmtEur(v) : fmtCount(v); }
+function delta(v25, v26) {
+  if (v25 === null || v26 === null || v25 === undefined || v26 === undefined || v25 === 0) {
+    return '<span class="na">—</span>';
+  }
+  const pct = ((v26 - v25) / v25) * 100;
+  const cls = pct >= 0 ? 'up' : 'down';
+  const sign = pct >= 0 ? '+' : '';
+  return `<span class="${cls}">${sign}${pct.toFixed(1)}%</span>`;
+}
+function deltaPlain(pct) {
+  if (pct === null) return '<span class="na">—</span>';
+  const cls = pct >= 0 ? 'up' : 'down';
+  const sign = pct >= 0 ? '+' : '';
+  return `<span class="${cls}">${sign}${pct.toFixed(1)}%</span>`;
+}
+
+function aggregate(DATA, kpi) {
+  const info = DATA[kpi];
+  const rows = info.rows;
+  const kind = info.kind;
+  const isAsp = kpi === 'ASP Woman' || kpi === 'ASP Men';
+  const visitsKpi = kpi === 'ASP Woman' ? 'Visits Woman' : (kpi === 'ASP Men' ? 'Visits Men' : null);
+
+  if (isAsp) {
+    const visitsRows = DATA[visitsKpi].rows;
+    const visitsById = {};
+    visitsRows.forEach(r => { visitsById[r.id] = r; });
+
+    let rev25 = 0, vis25 = 0, rev26 = 0, vis26 = 0;
+    rows.forEach(r => {
+      const vr = visitsById[r.id];
+      if (r.v25 !== null && vr && vr.v25 !== null) { rev25 += r.v25 * vr.v25; vis25 += vr.v25; }
+      if (r.v26 !== null && vr && vr.v26 !== null) { rev26 += r.v26 * vr.v26; vis26 += vr.v26; }
+    });
+    const val25 = vis25 ? rev25 / vis25 : null;
+    const val26 = vis26 ? rev26 / vis26 : null;
+    const pct = (val25 !== null && val26 !== null && val25 !== 0) ? ((val26 - val25) / val25 * 100) : null;
+    return { label: info.label, kind, val25, val26, pct, isAvg: true };
+  }
+
+  const v25list = rows.filter(r => r.v25 !== null).map(r => r.v25);
+  const v26list = rows.filter(r => r.v26 !== null).map(r => r.v26);
+  const val25 = v25list.length ? v25list.reduce((a,b) => a+b, 0) : null;
+  const val26 = v26list.length ? v26list.reduce((a,b) => a+b, 0) : null;
+  const pct = (val25 !== null && val26 !== null && val25 !== 0) ? ((val26 - val25) / val25 * 100) : null;
+  return { label: info.label, kind, val25, val26, pct, isAvg: false };
+}
+
+function buildResumen(DATA, groupKey) {
+  const cards = KPI_ORDER.map(kpi => {
+    const a = aggregate(DATA, kpi);
+    const v25 = Math.round((a.val25 ?? 0) * 100) / 100;
+    const v26 = Math.round((a.val26 ?? 0) * 100) / 100;
+    const tag = a.isAvg ? 'ticket medio ponderado' : 'total salones';
+    return `
+      <div class="summary-tile" style="min-width: 200px;">
+        <p class="summary-label">${a.label} <span style="color: var(--text-muted);">(${tag})</span></p>
+        <p class="summary-value">${fmtVal(v26, a.kind)}</p>
+        <p style="font-size:12px; color: var(--text-secondary); margin: 2px 0 0;">2025: ${fmtVal(v25, a.kind)} &nbsp;·&nbsp; ${deltaPlain(a.pct)}</p>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="panel active" id="${groupKey}-panel0">
+      <div class="summary-row" style="flex-wrap: wrap;">
+        ${cards}
+      </div>
+    </div>
+  `;
+}
+
+function buildPanel(DATA, kpi, idx, groupKey) {
+  const info = DATA[kpi];
+  const rows = info.rows.slice().sort((a, b) => a.salon.localeCompare(b.salon, 'es'));
+  const kind = info.kind;
+  const isAsp = kpi === 'ASP Woman' || kpi === 'ASP Men';
+
+  let total25, total26, n25 = 0, n26 = 0, labelTag;
+
+  if (isAsp) {
+    const a = aggregate(DATA, kpi);
+    total25 = a.val25;
+    total26 = a.val26;
+    rows.forEach(r => { if (r.v25 !== null) n25++; if (r.v26 !== null) n26++; });
+    labelTag = 'Ticket medio ponderado';
+  } else {
+    total25 = 0; total26 = 0;
+    rows.forEach(r => {
+      if (r.v25 !== null) { total25 += r.v25; n25++; }
+      if (r.v26 !== null) { total26 += r.v26; n26++; }
+    });
+    labelTag = 'Total';
+  }
+  const totalDeltaPct = (total25 !== null && total26 !== null && total25 !== 0) ? ((total26 - total25) / total25 * 100) : null;
+
+  const summaryHtml = `
+    <div class="summary-row">
+      <div class="summary-tile">
+        <p class="summary-label">${labelTag} 2025 (${n25} salones)</p>
+        <p class="summary-value">${fmtVal(total25 !== null ? Math.round(total25 * 100) / 100 : null, kind)}</p>
+      </div>
+      <div class="summary-tile">
+        <p class="summary-label">${labelTag} 2026 (${n26} salones)</p>
+        <p class="summary-value">${fmtVal(total26 !== null ? Math.round(total26 * 100) / 100 : null, kind)}</p>
+      </div>
+      <div class="summary-tile">
+        <p class="summary-label">Variación total</p>
+        <p class="summary-value">${totalDeltaPct !== null ? (totalDeltaPct >= 0 ? '+' : '') + totalDeltaPct.toFixed(1) + '%' : '—'}</p>
+      </div>
+    </div>
+  `;
+
+  const rowsHtml = rows.map(r => `
+    <tr>
+      <td>${r.salon}</td>
+      <td class="num">${fmtVal(r.v25, kind)}</td>
+      <td class="num">${fmtVal(r.v26, kind)}</td>
+      <td class="num">${delta(r.v25, r.v26)}</td>
+    </tr>
+  `).join('');
+
+  return `
+    <div class="panel" id="${groupKey}-panel${idx}">
+      ${summaryHtml}
+      <table>
+        <thead>
+          <tr>
+            <th>Salón</th>
+            <th class="num">2025</th>
+            <th class="num">2026</th>
+            <th class="num">Var.</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHtml}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderGroup(groupKey) {
+  const DATA = DATA_BY_GROUP[groupKey];
+  const container = document.getElementById('panels-' + groupKey);
+  container.innerHTML = '';
+  container.insertAdjacentHTML('beforeend', buildResumen(DATA, groupKey));
+  KPI_ORDER.forEach((kpi, idx) => {
+    container.insertAdjacentHTML('beforeend', buildPanel(DATA, kpi, idx + 1, groupKey));
+  });
+}
+
+['propios', 'franquicia'].forEach(renderGroup);
+
+// Sub-tab switching within each group
+['propios', 'franquicia'].forEach(groupKey => {
+  document.getElementById('tabs-' + groupKey).addEventListener('click', (e) => {
+    const btn = e.target.closest('.tab-btn');
+    if (!btn) return;
+    const tabId = btn.dataset.tab;
+    const tabsContainer = document.getElementById('tabs-' + groupKey);
+    const panelsContainer = document.getElementById('panels-' + groupKey);
+    tabsContainer.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    panelsContainer.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(groupKey + '-panel' + tabId.replace('tab', '')).classList.add('active');
+  });
+});
+
+// Group switching
+document.getElementById('groupTabs').addEventListener('click', (e) => {
+  const btn = e.target.closest('.group-btn');
+  if (!btn) return;
+  const group = btn.dataset.group;
+  document.querySelectorAll('.group-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.group-section').forEach(s => s.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelector(`.group-section[data-group="${group}"]`).classList.add('active');
+});
+</script>
+</body>
+</html>
